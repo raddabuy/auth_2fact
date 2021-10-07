@@ -23,8 +23,8 @@ class AuthyService
     {
         $user = $this->client->registerUser(
             $user->email,
-            $this->phoneNumber->phone_number,
-            $this->phoneNumber->diallingCode->dialling_code
+            $user->phoneNumber->phone_number,
+            $user->phoneNumber->diallingCode->dialling_code
         );
 
         if(!$user->ok())
