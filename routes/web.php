@@ -20,3 +20,11 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/auth/token', [App\Http\Controllers\Auth\AuthTokenController::class, 'getToken']);
+Route::post('/auth/token', [App\Http\Controllers\Auth\AuthTokenController::class, 'postToken']);
+
+Route::group(['middleware' => 'auth'], function(){
+   Route::get('/settings/twofactor','App\Http\Controllers\TwoFactorSettingsController@index');
+   Route::put('/settings/twofactor','App\Http\Controllers\TwoFactorSettingsController@update');
+});

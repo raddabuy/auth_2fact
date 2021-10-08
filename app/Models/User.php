@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'two_factor_type'
     ];
 
     /**
@@ -45,4 +46,63 @@ class User extends Authenticatable
     public function phoneNumber(){
         return $this->hasOne(NumberPhone::class);
     }
+
+    public function hasTwoFactorType($type)
+    {
+        return $this->two_factor_type === $type;
+    }
+
+    public function hasDiallingCode($diallingCodeId)
+    {
+        if ($this->hasPhoneNumber() === false) {
+            return false;
+        }
+
+        return $this->phoneNumber->diallingCode->id === $diallingCodeId;
+    }
+
+    public function hasTwoTactorAuthenticztionEnabled()
+    {
+        return $this->two_factor_type !== 'off';
+    }
+
+    public function hasSmsTwoTactorAuthenticztionEnabled()
+    {
+        return $this->two_factor_type === 'sms';
+    }
+
+    public function registeredForTwoFactorAuthentication()
+    {
+        return $this->authy_id !== null;
+    }
+
+    public function updatePhoneNumber($phoneNumber, $phoneNumberDiallingCode)
+    {
+        $this->phoneNumber()->delete();
+
+        if (!$phoneNumber) {
+            return;
+        }
+
+        return $this->phoneNumber()->create([
+            'phone_number' => $phoneNumber,
+            'dialling_code_id' => $phoneNumberDiallingCode,
+        ]);
+    }
+
+    public function hasPhoneNumber()
+    {
+        return $this->phoneNumber !== null;
+    }
+
+
+    public function getPhoneNumber()
+    {
+        if ($this->hasPhoneNumber() === false) {
+            return false;
+        }
+
+        return $this->phoneNumber->phone_number;
+    }
+
 }
